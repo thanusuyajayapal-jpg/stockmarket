@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule - TradeLearn Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Cpath d='M4 24H28V28H4V24ZM26 12L18 20L12 14L4 22V18L12 10L18 16L26 8V12Z' fill='%236366F1'/%3E%3C/svg%3E">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontWeight: {
+                        semibold: '500',
+                        bold: '600',
+                        extrabold: '800',
+                        black: '900'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* === RESET & CORE === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        /* === THEME VARIABLES === */
+        :root {
+            --bg-color: #FAFAFA;
+            --bg-secondary: #F3F4F6;
+            --bg-card: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --accent-color: #10B981; 
+            --accent-dark: #059669;
+            --border-color: #E5E7EB;
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --drawer-bg: rgba(255, 255, 255, 0.98);
+            --menu-hover-bg: #ECFDF5;
+        }
+
+        body.dark-mode {
+            --bg-color: #111827;
+            --bg-secondary: #1F2937;
+            --bg-card: #1F2937;
+            --text-main: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --accent-color: #34D399;
+            --accent-dark: #10B981;
+            --border-color: #374151;
+            --nav-bg: rgba(17, 24, 39, 0.85);
+            --drawer-bg: rgba(17, 24, 39, 0.98);
+            --menu-hover-bg: rgba(16, 185, 129, 0.1);
+        }
+
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .ml-auto { margin-right: auto; margin-left: 0; }
+        [dir="rtl"] .mr-auto { margin-left: auto; margin-right: 0; }
+
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+
+        /* === NAVBAR DESIGN === */
+        .navbar {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1440px;
+            z-index: 1000;
+            background: var(--nav-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 9999px;
+            padding: 0 32px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.1);
+        }
+
+        body.dark-mode .navbar {
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar.scrolled {
+            top: 12px;
+            width: 95%;
+            border-radius: 9999px;
+            height: 70px;
+            border: 1px solid var(--border-color);
+            background: var(--nav-bg);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark-mode .navbar.scrolled {
+            background: rgba(17, 24, 39, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link {
+            padding: 8px 4px;
+            margin: 0 14px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-color); }
+
+        /* Dropdowns */
+        .dropdown { position: relative; display: flex; align-items: center; height: 100%; }
+        .dropdown-menu {
+            position: absolute;
+            top: 65px;
+            left: 0;
+            transform: translateY(15px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+        .navbar.scrolled .dropdown-menu { top: 55px; }
+        .dropdown-inner {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            min-width: 240px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        body.dark-mode .dropdown-inner { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); }
+        .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        
+        .dropdown-item {
+            display: block;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .dropdown-item:hover {
+            background: var(--menu-hover-bg);
+            color: var(--accent-color);
+            transform: translateX(4px);
+        }
+        [dir="rtl"] .dropdown-item:hover { transform: translateX(-4px); }
+
+        /* === BUTTONS === */
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 800;
+        }
+        .icon-btn:hover {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 9999px;
+            border: none;
+        }
+        .btn-solid {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-solid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+        .btn-outline {
+            background: var(--bg-secondary);
+            color: var(--accent-color) !important;
+        }
+        .btn-outline:hover {
+            background: var(--accent-color);
+            color: #FFFFFF !important;
+            transform: translateY(-2px);
+        }
+
+        /* MOBILE MENU */
+        .drawer-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 999;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(4px);
+        }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+        .fullscreen-menu {
+            position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; height: 100dvh;
+            background: var(--drawer-bg); z-index: 1001; display: flex; flex-direction: column;
+            opacity: 0; visibility: hidden; transform: translateX(100%);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border-left: 1px solid var(--border-color);
+        }
+        [dir="rtl"] .fullscreen-menu {
+            right: auto; left: 0; transform: translateX(-100%);
+            border-left: none; border-right: 1px solid var(--border-color);
+        }
+        .fullscreen-menu.active { opacity: 1; visibility: visible; transform: translateX(0); }
+        .mobile-link {
+            display: block; width: 100%; padding: 16px 32px; font-size: 1.1rem;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-main); text-decoration: none; transition: all 0.3s;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .mobile-link:hover {
+            color: var(--accent-color); padding-left: 40px; background: var(--menu-hover-bg);
+        }
+        [dir="rtl"] .mobile-link:hover { padding-left: 32px; padding-right: 40px; }
+
+        /* FOOTER */
+        footer { background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding-top: 80px; }
+        body.dark-mode footer { border-color: var(--border-color); }
+        footer h4 { color: var(--text-main); font-weight: 600; font-size: 1.1rem; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        footer a, footer li, footer span { color: var(--text-muted); text-decoration: none; transition: all 0.3s; font-size: 0.95rem; font-weight: 400; }
+        footer a:hover { color: var(--accent-color); }
+        .social-link-circle {
+            width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+            color: var(--text-main); background: transparent;
+        }
+        .social-link-circle:hover { background: var(--accent-color); border-color: var(--accent-color); color: #FFFFFF; transform: translateY(-3px); }
+        .footer-bottom { border-top: 1px solid var(--border-color); padding: 32px 0; margin-top: 60px; }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar" id="main-nav">
+        <div class="w-full flex items-center justify-between mx-auto">
+            <div class="flex items-center flex-shrink-0">
+                <a href="index.html" class="inline-flex items-center gap-2 text-2xl font-bold tracking-normal uppercase"
+                    style="color: var(--text-main) !important; text-decoration: none;">
+                    <i class="fas fa-chart-line text-3xl" style="color: var(--accent-color);"></i>
+                    TradeLearn
+                </a>
+            </div>
+
+            <div class="hidden xl:flex justify-center items-center flex-1">
+                <div class="dropdown">
+                    <div class="nav-link">Home <i class="fas fa-chevron-down text-[9px] ml-1 opacity-50"></i></div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-inner">
+                            <a href="index.html" class="dropdown-item">Home Page 1</a>
+                            <a href="home-2.html" class="dropdown-item">Home Page 2</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="schedule.html" class="nav-link active">Schedule</a>
+                <a href="faq.html" class="nav-link">FAQ</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <div class="dropdown">
+                    <div class="nav-link">Dashboard <i class="fas fa-chevron-down text-[9px] ml-1 opacity-50"></i></div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-inner">
+                            <a href="user.html" class="dropdown-item">User Dashboard</a>
+                            <a href="admin.html" class="dropdown-item">Admin Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden xl:flex items-center gap-3">
+                <button id="theme-toggle-desktop" class="icon-btn" title="Toggle Dark Mode">
+                    <i class="fas fa-moon" id="theme-icon-desktop"></i>
+                </button>
+                <button id="rtl-btn" class="icon-btn" title="Toggle LTR/RTL">
+                    LTR
+                </button>
+                <div class="w-px h-6 bg-[var(--border-color)] mx-2"></div>
+                <a href="login.html" class="btn btn-solid !w-[100px] !h-[40px] !p-0 !text-[11px]">login</a>
+            </div>
+
+            <div class="xl:hidden flex items-center justify-end gap-4">
+                <button id="mobile-btn" class="text-2xl text-[var(--text-main)] transition-colors hover:text-[var(--accent-color)]">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================= HAMBURGER / MOBILE MENU ================= -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+    <div class="fullscreen-menu" id="fullscreen-menu">
+        <div class="w-full px-8 py-6 flex justify-between items-center shrink-0 border-b border-[var(--border-color)]">
+            <a href="index.html" class="text-xl font-bold tracking-normal uppercase block flex items-center gap-2"
+                style="color: var(--text-main) !important; text-decoration: none;">
+                <i class="fas fa-chart-line" style="color: var(--accent-color);"></i> TradeLearn
+            </a>
+            <button id="close-menu" class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-xl text-[var(--text-main)] hover:bg-[var(--bg-secondary)] hover:text-[var(--accent-color)]">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="flex flex-col w-full overflow-y-auto flex-1 py-4">
+            <a href="index.html" class="mobile-link">Home Page 1</a>
+            <a href="home-2.html" class="mobile-link">Home Page 2</a>
+            <a href="about.html" class="mobile-link">About</a>
+            <a href="services.html" class="mobile-link">Services</a>
+            <a href="schedule.html" class="mobile-link" style="color: var(--accent-color);">Schedule</a>
+            <a href="faq.html" class="mobile-link">FAQ</a>
+            <a href="contact.html" class="mobile-link">Contact</a>
+            <div class="px-8 mt-6 mb-2">
+                <span class="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest">Portals</span>
+            </div>
+            <a href="user.html" class="mobile-link !text-sm text-[var(--text-muted)]">User Dashboard</a>
+            <a href="admin.html" class="mobile-link !text-sm text-[var(--text-muted)]">Admin Dashboard</a>
+        </div>
+        <div class="w-full px-8 py-8 border-t border-[var(--border-color)] flex flex-col gap-6 shrink-0 bg-[var(--bg-secondary)]">
+            <div class="flex justify-between items-center w-full">
+                <div class="flex items-center gap-3">
+                    <span class="text-[var(--text-muted)] font-medium text-[10px] uppercase tracking-widest">Theme</span>
+                    <button id="theme-toggle-mobile" class="icon-btn">
+                        <i class="fas fa-moon" id="theme-icon-mobile"></i>
+                    </button>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[var(--text-muted)] font-medium text-[10px] uppercase tracking-widest">Dir</span>
+                    <button id="rtl-toggle-mobile" class="icon-btn">LTR</button>
+                </div>
+            </div>
+            <div class="flex gap-4 w-full">
+                <a href="login.html" class="btn btn-outline flex-1 !py-3">login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= HERO BANNER ================= -->
+    <section class="relative w-full h-[100dvh] pt-20 flex items-center overflow-hidden bg-[var(--bg-color)] border-b border-[var(--border-color)]">
+        <div class="absolute top-20 left-10 w-64 h-64 bg-emerald-300/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+        <div class="absolute top-40 right-10 w-64 h-64 bg-teal-300/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-40 w-64 h-64 bg-cyan-300/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-12 w-full relative z-10">
+            <div class="grid lg:grid-cols-2 gap-8 items-center">
+                <div class="flex flex-col items-start text-left max-w-2xl">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-card)] border border-[var(--border-color)] shadow-sm text-[var(--accent-color)] text-xs font-bold uppercase tracking-widest mb-4 md:mb-6">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Live Market Access
+                    </span>
+
+                    <h1 class="text-4xl md:text-5xl lg:text-[4.5rem] font-black leading-[1.1] mb-4 md:mb-6 text-[var(--text-main)] tracking-tight">
+                        Live Trading <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-color)] to-teal-600">Schedule</span>
+                    </h1>
+
+                    <p class="text-[var(--text-muted)] text-base md:text-lg lg:text-xl leading-relaxed font-medium mb-6 md:mb-8 max-w-lg">
+                        Join our daily live market analysis, weekly mentorship calls, and real-time execution rooms. Never miss a profitable setup by syncing your calendar with our global mentors.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-6 md:mb-10">
+                        <a href="#sessions" class="btn btn-solid !py-4 !px-8 text-sm flex items-center justify-center gap-2 group">
+                            View Sessions <i class="fas fa-arrow-down group-hover:translate-y-1 transition-transform"></i>
+                        </a>
+                        <a href="booking.html" class="btn btn-outline !bg-[var(--bg-card)] !text-[var(--text-main)] hover:!border-[var(--accent-color)] hover:!text-[var(--accent-color)] !py-4 !px-8 text-sm flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fas fa-calendar-alt"></i> Sync Calendar
+                        </a>
+                    </div>
+
+                    <div class="hidden sm:flex items-center gap-6 text-sm text-[var(--text-muted)] font-medium">
+                        <div class="flex items-center gap-2"><i class="fas fa-clock text-green-500"></i> Daily Sessions</div>
+                        <div class="flex items-center gap-2"><i class="fas fa-globe text-green-500"></i> All Timezones</div>
+                        <div class="flex items-center gap-2"><i class="fas fa-video text-green-500"></i> HD Recordings</div>
+                    </div>
+                </div>
+
+                <div class="relative w-full h-[35vh] lg:h-[60vh] flex flex-col lg:flex-row lg:items-center lg:justify-center mt-4 lg:mt-0 gap-6 lg:gap-0">
+                    <div class="relative lg:absolute w-full lg:w-[75%] h-full lg:h-[80%] rounded-[40px] overflow-hidden shadow-2xl border-4 border-[var(--bg-card)] z-20 transform lg:hover:-translate-y-2 transition-transform duration-500">
+                        <img src="images/stock (10).jpg" alt="Live Trading Session" class="w-full h-full object-cover">
+                    </div>
+                    <div class="hidden lg:block relative lg:absolute lg:top-0 lg:right-0 w-full lg:w-[45%] lg:h-[45%] rounded-[30px] overflow-hidden shadow-xl border-4 border-[var(--bg-card)] z-30 transform lg:hover:-translate-y-2 transition-transform duration-500 lg:animate-float">
+                        <img src="images/stock (11).jpg" alt="Trading Timetable" class="w-full h-full object-cover">
+                    </div>
+                    <div class="hidden lg:block relative lg:absolute lg:bottom-4 lg:left-0 w-full lg:w-[40%] lg:h-[40%] rounded-[30px] overflow-hidden shadow-xl border-4 border-[var(--bg-card)] z-30 transform lg:hover:-translate-y-2 transition-transform duration-500 lg:animate-float animation-delay-2000">
+                        <img src="images/stock (3).jpg" alt="Mentorship Call" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SECTION 1: 6 SERVICE CARDS (UNIQUE DESIGN) ================= -->
+    <section id="sessions" class="py-24 bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-[var(--accent-color)] font-bold tracking-widest uppercase text-sm mb-4 block">Available Rooms</span>
+                <h2 class="text-4xl md:text-5xl font-black text-[var(--text-main)] mb-6">Live Mentorship Sessions</h2>
+                <p class="text-[var(--text-muted)] text-lg">Select a session to view details and join our top mentors in the live market.</p>
+            </div>
+
+            <!-- CSS Grid driving identical heights and dynamic flex-box inside -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Card 1 -->
+                <div class="flex flex-col h-full bg-[var(--bg-card)] p-3 rounded-[2rem] border border-[var(--border-color)] shadow-sm hover:shadow-2xl hover:border-[var(--accent-color)] transition-all duration-300">
+                    <div class="w-full h-52 rounded-[1.5rem] overflow-hidden relative group">
+                        <img src="images/stock (12).jpg" alt="NY Open Scalping" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-[var(--accent-color)] text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md">09:30 AM EST</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-1 p-5 text-center">
+                        <h3 class="text-xl font-bold text-[var(--text-main)] mb-3">NY Open Scalping</h3>
+                        <p class="text-[var(--text-muted)] text-sm font-medium mb-6 flex-1 leading-relaxed">
+                            Trade the highly volatile New York open with our lead mentors. Real-time entries and exits.
+                        </p>
+                        <a href="services-details.html" class="btn btn-outline w-full mt-auto !py-3.5 !rounded-xl !text-xs !bg-[var(--bg-secondary)] hover:!bg-[var(--accent-color)]">Enquire Now</a>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flex flex-col h-full bg-[var(--bg-card)] p-3 rounded-[2rem] border border-[var(--border-color)] shadow-sm hover:shadow-2xl hover:border-[var(--accent-color)] transition-all duration-300">
+                    <div class="w-full h-52 rounded-[1.5rem] overflow-hidden relative group">
+                        <img src="images/stock (13).jpg" alt="London Breakout" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md">03:00 AM EST</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-1 p-5 text-center">
+                        <h3 class="text-xl font-bold text-[var(--text-main)] mb-3">London Breakout</h3>
+                        <p class="text-[var(--text-muted)] text-sm font-medium mb-6 flex-1 leading-relaxed">
+                            Capitalize on forex and index volume spikes during the London market transition.
+                        </p>
+                        <a href="services-details.html" class="btn btn-outline w-full mt-auto !py-3.5 !rounded-xl !text-xs !bg-[var(--bg-secondary)] hover:!bg-[var(--accent-color)]">Enquire Now</a>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flex flex-col h-full bg-[var(--bg-card)] p-3 rounded-[2rem] border border-[var(--border-color)] shadow-sm hover:shadow-2xl hover:border-[var(--accent-color)] transition-all duration-300">
+                    <div class="w-full h-52 rounded-[1.5rem] overflow-hidden relative group">
+                        <img src="images/stock (14).jpg" alt="Weekly Recap" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md">Fridays 4 PM</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-1 p-5 text-center">
+                        <h3 class="text-xl font-bold text-[var(--text-main)] mb-3">End of Week Recap</h3>
+                        <p class="text-[var(--text-muted)] text-sm font-medium mb-6 flex-1 leading-relaxed">
+                            Review all major setups from the week, analyze losses, and prepare a watchlist for Monday.
+                        </p>
+                        <a href="services-details.html" class="btn btn-outline w-full mt-auto !py-3.5 !rounded-xl !text-xs !bg-[var(--bg-secondary)] hover:!bg-[var(--accent-color)]">Enquire Now</a>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flex flex-col h-full bg-[var(--bg-card)] p-3 rounded-[2rem] border border-[var(--border-color)] shadow-sm hover:shadow-2xl hover:border-[var(--accent-color)] transition-all duration-300">
+                    <div class="w-full h-52 rounded-[1.5rem] overflow-hidden relative group">
+                        <img src="images/stock (2).jpg" alt="Options Masterclass" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md">Tuesdays 1 PM</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-1 p-5 text-center">
+                        <h3 class="text-xl font-bold text-[var(--text-main)] mb-3">Options Masterclass</h3>
+                        <p class="text-[var(--text-muted)] text-sm font-medium mb-6 flex-1 leading-relaxed">
+                            Deep dive into options Greeks, credit spread setups, and implied volatility tracking.
+                        </p>
+                        <a href="services-details.html" class="btn btn-outline w-full mt-auto !py-3.5 !rounded-xl !text-xs !bg-[var(--bg-secondary)] hover:!bg-[var(--accent-color)]">Enquire Now</a>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="flex flex-col h-full bg-[var(--bg-card)] p-3 rounded-[2rem] border border-[var(--border-color)] shadow-sm hover:shadow-2xl hover:border-[var(--accent-color)] transition-all duration-300">
+                    <div class="w-full h-52 rounded-[1.5rem] overflow-hidden relative group">
+                        <img src="images/stock (3).jpg" alt="Crypto Technicals" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-gray-800 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md border border-gray-600">Daily 8 PM EST</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-1 p-5 text-center">
+                        <h3 class="text-xl font-bold text-[var(--text-main)] mb-3">Crypto Technicals</h3>
+                        <p class="text-[var(--text-muted)] text-sm font-medium mb-6 flex-1 leading-relaxed">
+                            Analyze Bitcoin, Ethereum, and emerging altcoin charts using high timeframe market structure.
+                        </p>
+                        <a href="services-details.html" class="btn btn-outline w-full mt-auto !py-3.5 !rounded-xl !text-xs !bg-[var(--bg-secondary)] hover:!bg-[var(--accent-color)]">Enquire Now</a>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="flex flex-col h-full bg-[var(--bg-card)] p-3 rounded-[2rem] border border-[var(--border-color)] shadow-sm hover:shadow-2xl hover:border-[var(--accent-color)] transition-all duration-300">
+                    <div class="w-full h-52 rounded-[1.5rem] overflow-hidden relative group">
+                        <img src="images/about4.jpg" alt="Mindset Mentorship" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="bg-pink-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md">Sundays 10 AM</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col flex-1 p-5 text-center">
+                        <h3 class="text-xl font-bold text-[var(--text-main)] mb-3">Mindset Mentorship</h3>
+                        <p class="text-[var(--text-muted)] text-sm font-medium mb-6 flex-1 leading-relaxed">
+                            Overcome trading psychology hurdles, manage tilt, and build unbreakable mental discipline.
+                        </p>
+                        <a href="services-details.html" class="btn btn-outline w-full mt-auto !py-3.5 !rounded-xl !text-xs !bg-[var(--bg-secondary)] hover:!bg-[var(--accent-color)]">Enquire Now</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- ================= END SECTION 1 ================= -->
+
+    <!-- ================= EXTRA SECTION 1: WEEKLY TIMETABLE ================= -->
+    <section class="py-20 bg-[var(--bg-color)] border-b border-[var(--border-color)]">
+        <div class="max-w-[1000px] mx-auto px-6 lg:px-12">
+            <div class="text-center mb-12">
+                <span class="text-[var(--accent-color)] font-bold tracking-widest uppercase text-sm mb-3 block">At a Glance</span>
+                <h2 class="text-3xl font-black text-[var(--text-main)]">Standard Weekly Timetable</h2>
+            </div>
+            <div class="bg-[var(--bg-card)] rounded-[2rem] border border-[var(--border-color)] shadow-sm overflow-hidden">
+                <div class="flex flex-col divide-y divide-[var(--border-color)]">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center p-6 hover:bg-[var(--bg-secondary)] transition-colors">
+                        <div class="w-32 font-bold text-[var(--text-main)] text-lg mb-2 sm:mb-0">Monday</div>
+                        <div class="flex-1 flex flex-col gap-1">
+                            <span class="text-sm font-medium text-[var(--text-main)]">Market Prep & Levels</span>
+                            <span class="text-xs text-[var(--text-muted)]">08:00 AM EST • Discord Voice</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center p-6 hover:bg-[var(--bg-secondary)] transition-colors">
+                        <div class="w-32 font-bold text-[var(--text-main)] text-lg mb-2 sm:mb-0">Tuesday</div>
+                        <div class="flex-1 flex flex-col gap-1">
+                            <span class="text-sm font-medium text-[var(--text-main)]">Options Masterclass</span>
+                            <span class="text-xs text-[var(--text-muted)]">01:00 PM EST • Zoom Webinar</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center p-6 hover:bg-[var(--bg-secondary)] transition-colors bg-emerald-50 dark:bg-emerald-900/10">
+                        <div class="w-32 font-bold text-[var(--accent-color)] text-lg mb-2 sm:mb-0">Wednesday</div>
+                        <div class="flex-1 flex flex-col gap-1">
+                            <span class="text-sm font-bold text-[var(--accent-color)]">Live Trading Room (All Mentors)</span>
+                            <span class="text-xs text-[var(--text-muted)]">09:30 AM EST • Live Stream</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center p-6 hover:bg-[var(--bg-secondary)] transition-colors">
+                        <div class="w-32 font-bold text-[var(--text-main)] text-lg mb-2 sm:mb-0">Thursday</div>
+                        <div class="flex-1 flex flex-col gap-1">
+                            <span class="text-sm font-medium text-[var(--text-main)]">Algo & Indicator Workshop</span>
+                            <span class="text-xs text-[var(--text-muted)]">06:00 PM EST • Zoom Webinar</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center p-6 hover:bg-[var(--bg-secondary)] transition-colors">
+                        <div class="w-32 font-bold text-[var(--text-main)] text-lg mb-2 sm:mb-0">Friday</div>
+                        <div class="flex-1 flex flex-col gap-1">
+                            <span class="text-sm font-medium text-[var(--text-main)]">Weekly Recap & Journaling</span>
+                            <span class="text-xs text-[var(--text-muted)]">04:00 PM EST • Discord Voice</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ================= END EXTRA SECTION 1 ================= -->
+
+    <!-- ================= EXTRA SECTION 2: GLOBAL TIMEZONES ================= -->
+    <section class="py-20 bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <i class="fas fa-globe-americas text-4xl text-[var(--accent-color)] mb-4"></i>
+                <h2 class="text-3xl font-black text-[var(--text-main)] mb-4">Global Market Timezones</h2>
+                <p class="text-[var(--text-muted)] text-sm leading-relaxed">Our schedule is designed to accommodate traders worldwide. We focus on the three major market sessions to provide maximum volatility and opportunity.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-[var(--bg-card)] p-8 rounded-3xl border border-[var(--border-color)] text-center flex flex-col items-center">
+                    <h3 class="text-lg font-bold text-[var(--text-main)] mb-1">New York</h3>
+                    <p class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-4">The US Session</p>
+                    <div class="text-3xl font-black text-[var(--text-main)] mb-2">09:30 AM</div>
+                    <p class="text-[var(--text-muted)] text-xs font-medium">Eastern Standard Time (EST)</p>
+                </div>
+                <div class="bg-[var(--bg-card)] p-8 rounded-3xl border border-[var(--border-color)] text-center flex flex-col items-center">
+                    <h3 class="text-lg font-bold text-[var(--text-main)] mb-1">London</h3>
+                    <p class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-4">The Euro Session</p>
+                    <div class="text-3xl font-black text-[var(--text-main)] mb-2">08:00 AM</div>
+                    <p class="text-[var(--text-muted)] text-xs font-medium">Greenwich Mean Time (GMT)</p>
+                </div>
+                <div class="bg-[var(--bg-card)] p-8 rounded-3xl border border-[var(--border-color)] text-center flex flex-col items-center">
+                    <h3 class="text-lg font-bold text-[var(--text-main)] mb-1">Tokyo</h3>
+                    <p class="text-xs font-bold text-orange-500 uppercase tracking-widest mb-4">The Asian Session</p>
+                    <div class="text-3xl font-black text-[var(--text-main)] mb-2">09:00 AM</div>
+                    <p class="text-[var(--text-muted)] text-xs font-medium">Japan Standard Time (JST)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ================= END EXTRA SECTION 2 ================= -->
+
+    <!-- ================= EXTRA SECTION 3: WEBINAR BANNER ================= -->
+    <section class="py-20 bg-gray-900 border-b border-[var(--border-color)] overflow-hidden relative">
+        <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%2310b981\' fill-opacity=\'1\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'3\'/%3E%3Ccircle cx=\'13\' cy=\'13\' r=\'3\'/%3E%3C/g%3E%3C/svg%3E')]"></div>
+        <div class="max-w-[1000px] mx-auto px-6 relative z-10 text-center flex flex-col items-center">
+            <span class="px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold uppercase tracking-widest mb-6 inline-block">
+                Special Event
+            </span>
+            <h2 class="text-3xl md:text-5xl font-black text-white mb-6">Free Sunday Masterclass</h2>
+            <p class="text-gray-400 text-lg mb-10 max-w-2xl leading-relaxed">Join thousands of students this weekend for a 2-hour intensive on "Institutional Order Flow". Learn how to spot hidden liquidity pools before the market opens on Monday.</p>
+            <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <a href="booking.html" class="btn btn-solid !bg-emerald-500 hover:!bg-emerald-400 !border-none !text-white !py-4 !px-10 shadow-xl shadow-emerald-500/20 w-full sm:w-auto">Reserve My Seat</a>
+            </div>
+            <p class="text-gray-500 text-xs mt-6 font-medium uppercase tracking-widest">Limited to 500 Participants</p>
+        </div>
+    </section>
+    <!-- ================= END EXTRA SECTION 3 ================= -->
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10 pt-4">
+                <div class="lg:col-span-4">
+                    <div class="mb-6">
+                        <a href="index.html" class="inline-flex items-center gap-2 text-2xl font-bold tracking-normal uppercase"
+                            style="color: var(--text-main) !important; text-decoration: none;">
+                            <i class="fas fa-chart-line text-3xl" style="color: var(--accent-color);"></i>
+                            TradeLearn
+                        </a>
+                    </div>
+                    <p class="opacity-80 leading-relaxed text-sm font-medium mb-8 max-w-sm" style="color: var(--text-muted);">
+                        Empowering individuals through financial literacy and technical mastery. We turn market curiosity into consistent profitability with engaging trading workshops and live charting sessions.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="social-link-circle"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link-circle"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#" class="social-link-circle"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link-circle"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="lg:col-span-8">
+                    <!-- EXACT copy pasted footer redirects adapted to Trading -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+                        <div>
+                            <h4>Student Portal</h4>
+                            <ul class="space-y-4">
+                                <li><a href="signup.html">Student Signup</a></li>
+                                <li><a href="user.html">My Dashboard</a></li>
+                                <li><a href="schedule.html">Live Mentorship</a></li>
+                                <li><a href="schedule.html">Course Pricing</a></li>
+                                <li><a href="faq.html">Help Center</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Our Courses</h4>
+                            <ul class="space-y-4">
+                                <li><a href="services.html">Beginner Investing</a></li>
+                                <li><a href="services.html">Day Trading Mastery</a></li>
+                                <li><a href="services.html">Options Strategies</a></li>
+                                <li><a href="services.html">Crypto Bootcamp</a></li>
+                                <li><a href="services.html">Technical Analysis</a></li>
+                            </ul>
+                        </div>
+                        <div class="sm:col-span-2 md:col-span-1">
+                            <h4>Academy Location</h4>
+                            <ul class="space-y-4 text-[var(--text-muted)] text-sm font-medium">
+                                <li class="flex items-start gap-4"><i class="fas fa-map-marker-alt mt-1 shrink-0" style="color: var(--accent-color);"></i><span>Wall Street Plaza<br>Financial District, NY 10005</span></li>
+                                <li class="flex items-center gap-4"><i class="fas fa-phone shrink-0" style="color: var(--accent-color);"></i><a href="tel:+15550198" class="break-all hover:text-[var(--accent-color)]">+1 (555) 800-TRADE</a></li>
+                                <li class="flex items-center gap-4"><i class="fas fa-envelope shrink-0" style="color: var(--accent-color);"></i><a href="contact.html" class="break-all hover:text-[var(--accent-color)]">support@tradelearn.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom flex flex-col md:flex-row justify-between items-center text-xs gap-6 font-semibold uppercase tracking-widest">
+                <p style="color: var(--text-muted);">&copy; 2026 TradeLearn. All rights reserved.</p>
+                <div class="flex flex-wrap justify-center gap-6 sm:gap-8">
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Risk Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // Floating Navbar logic
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 20) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile Menu toggle logic
+        const mobileBtn = document.getElementById('mobile-btn');
+        const fullscreenMenu = document.getElementById('fullscreen-menu');
+        const closeMenu = document.getElementById('close-menu');
+        const drawerOverlay = document.getElementById('drawer-overlay');
+
+        function toggleMenu() {
+            fullscreenMenu.classList.toggle('active');
+            drawerOverlay.classList.toggle('active');
+            document.body.style.overflow = fullscreenMenu.classList.contains('active') ? 'hidden' : 'auto';
+        }
+
+        mobileBtn.onclick = toggleMenu;
+        closeMenu.onclick = toggleMenu;
+        drawerOverlay.onclick = toggleMenu;
+
+        // Theme logic
+        const themeDesktop = document.getElementById('theme-toggle-desktop');
+        const themeMobile = document.getElementById('theme-toggle-mobile');
+        const iconDesktop = document.getElementById('theme-icon-desktop');
+        const iconMobile = document.getElementById('theme-icon-mobile');
+        const theme = localStorage.getItem('theme') || 'light';
+
+        function updateThemeUI(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                if (iconDesktop) iconDesktop.className = 'fas fa-sun';
+                if (iconMobile) iconMobile.className = 'fas fa-sun';
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (iconDesktop) iconDesktop.className = 'fas fa-moon';
+                if (iconMobile) iconMobile.className = 'fas fa-moon';
+            }
+        }
+
+        updateThemeUI(theme === 'dark');
+
+        function toggleTheme() {
+            const isDark = !document.body.classList.contains('dark-mode');
+            updateThemeUI(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        themeDesktop.onclick = toggleTheme;
+        if (themeMobile) themeMobile.onclick = toggleTheme;
+
+        // RTL/LTR logic
+        const rtlBtn = document.getElementById('rtl-btn');
+        const rtlMobile = document.getElementById('rtl-toggle-mobile');
+        const dir = localStorage.getItem('dir') || 'ltr';
+
+        function updateRTLUI(currentDir) {
+            const isRTL = currentDir === 'rtl';
+            if (rtlBtn) rtlBtn.innerText = isRTL ? 'RTL' : 'LTR';
+            if (rtlMobile) rtlMobile.innerText = isRTL ? 'RTL' : 'LTR';
+        }
+
+        if (dir === 'rtl') { document.documentElement.dir = 'rtl'; }
+        updateRTLUI(dir);
+
+        function toggleRTL() {
+            const isRTL = document.documentElement.dir === 'rtl';
+            const newDir = isRTL ? 'ltr' : 'rtl';
+            document.documentElement.dir = newDir;
+            localStorage.setItem('dir', newDir);
+            updateRTLUI(newDir);
+        }
+
+        if (rtlBtn) rtlBtn.onclick = toggleRTL;
+        if (rtlMobile) rtlMobile.onclick = toggleRTL;
+    </script>
+</body>
+
+</html>
