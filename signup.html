@@ -42,7 +42,7 @@
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             transition: background-color 0.3s, color 0.3s;
-            overflow: hidden; /* NO SCROLL */
+            overflow-x: hidden;
         }
 
         .input-field {
@@ -60,43 +60,47 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            max-height: 90vh; /* Keep it within screen */
         }
         
         body.dark-mode .glass-card {
-            background: rgba(31, 41, 55, 0.85);
+            background: rgba(31, 41, 55, 0.95);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        @media (min-width: 768px) {
+            .glass-card {
+                max-height: 90vh;
+            }
+        }
     </style>
 </head>
-<body class="h-screen w-screen relative flex items-center justify-center p-4">
+<body class="min-h-screen min-h-[100dvh] w-full relative flex flex-col items-center justify-center p-4 sm:p-6 overflow-x-hidden">
 
     <!-- BACKGROUND EFFECTS -->
-    <div class="absolute inset-0 z-0 overflow-hidden">
-        <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-emerald-500/20 blur-[120px]"></div>
-        <div class="absolute top-[60%] -right-[10%] w-[40%] h-[50%] rounded-full bg-blue-500/20 blur-[120px]"></div>
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-[20%] -start-[10%] w-[50%] h-[50%] rounded-full bg-emerald-500/20 blur-[120px]"></div>
+        <div class="absolute top-[60%] -end-[10%] w-[40%] h-[50%] rounded-full bg-blue-500/20 blur-[120px]"></div>
         <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%2310b981\' fill-opacity=\'0.03\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
     </div>
 
-    <!-- Dark mode toggle -->
-    
-    <div class="absolute top-6 end-6 z-20 flex items-center gap-3">
-        <button id="theme-toggle" class="w-10 h-10 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--accent-color)] hover:text-white hover:border-[var(--accent-color)] transition-all">
+    <!-- CONTROLS WRAPPER (Sits above card on mobile, fixed in corner on desktop) -->
+    <div class="w-full max-w-4xl flex justify-end items-center gap-2.5 mb-3 sm:mb-4 sm:fixed sm:top-6 sm:end-6 sm:w-auto sm:mb-0 z-30">
+        <button id="theme-toggle" type="button" aria-label="Toggle theme" class="w-10 h-10 rounded-full bg-[var(--bg-card)] sm:bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--accent-color)] hover:text-white hover:border-[var(--accent-color)] shadow-sm transition-all">
             <i class="fas fa-moon" id="theme-icon"></i>
         </button>
-        <button id="rtl-btn" class="h-10 px-3 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-main)] font-bold text-xs hover:bg-[var(--accent-color)] hover:text-white hover:border-[var(--accent-color)] transition-all">
-            LTR
+        <button id="rtl-btn" type="button" aria-label="Toggle direction" class="h-10 px-3.5 rounded-full bg-[var(--bg-card)] sm:bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-main)] font-bold text-xs hover:bg-[var(--accent-color)] hover:text-white hover:border-[var(--accent-color)] shadow-sm transition-all">
+            RTL
         </button>
     </div>
 
     <!-- CENTERED CARD -->
-    <div class="glass-card w-full max-w-4xl rounded-[24px] flex flex-col md:flex-row overflow-hidden relative z-10">
+    <div class="glass-card w-full max-w-4xl rounded-[24px] flex flex-col md:flex-row overflow-hidden relative z-10 shadow-2xl my-auto">
         
         <!-- FORM SIDE -->
-        <div class="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-center overflow-y-auto" style="max-height: 90vh;">
+        <div class="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-center md:overflow-y-auto">
             <div class="mb-5">
-                <!-- 100% IDENTICAL LOGO -->
+                <!-- LOGO -->
                 <a href="index.html" class="inline-flex items-center gap-2 text-2xl font-bold tracking-normal uppercase mb-5" style="color: var(--text-main) !important; text-decoration: none;">
                     <i class="fas fa-chart-line text-3xl" style="color: var(--accent-color);"></i>
                     TradeLearn
@@ -124,7 +128,7 @@
             </div>
 
             <form action="user.html" method="GET" class="space-y-3">
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
                     <div>
                         <label class="block text-[11px] font-bold text-[var(--text-main)] mb-1 uppercase tracking-wide">First Name</label>
                         <input type="text" class="input-field w-full rounded-lg px-3 py-2 transition-all text-xs font-medium placeholder-[var(--text-muted)]" placeholder="John" required>
@@ -145,7 +149,7 @@
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
                     <div>
                         <label class="block text-[11px] font-bold text-[var(--text-main)] mb-1 uppercase tracking-wide">Password</label>
                         <div class="relative">
@@ -153,7 +157,7 @@
                                 <i class="fas fa-lock text-[var(--text-muted)] text-xs"></i>
                             </div>
                             <input type="password" id="password-input" class="input-field w-full rounded-lg ps-8 pe-8 py-2 transition-all text-xs font-medium placeholder-[var(--text-muted)]" placeholder="••••••••" required>
-                            <button type="button" id="toggle-password" class="absolute inset-y-0 end-0 pe-2 flex items-center text-[var(--text-muted)] hover:text-[var(--accent-color)] transition-colors">
+                            <button type="button" id="toggle-password" class="absolute inset-y-0 end-0 pe-2.5 px-2 flex items-center text-[var(--text-muted)] hover:text-[var(--accent-color)] transition-colors">
                                 <i class="fas fa-eye text-xs"></i>
                             </button>
                         </div>
@@ -176,7 +180,7 @@
                             <i class="fas fa-check text-[10px] text-[var(--accent-color)] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
                         </div>
                     </label>
-                    <p class="text-[11px] font-semibold text-[var(--text-muted)] leading-tight">
+                    <p class="text-[11px] font-semibold text-[var(--text-muted)] leading-tight select-none">
                         I agree to the <a href="#" class="text-[var(--accent-color)] hover:underline">Terms of Service</a> & <a href="#" class="text-[var(--accent-color)] hover:underline">Policy</a>.
                     </p>
                 </div>
@@ -192,14 +196,14 @@
             </p>
         </div>
 
-        <!-- IMAGE SIDE -->
+        <!-- IMAGE SIDE (Desktop Only) -->
         <div class="hidden md:flex md:w-1/2 relative bg-[var(--accent-color)] p-8 text-white flex-col justify-end overflow-hidden">
             <div class="absolute inset-0">
                 <img src="images/trading (3).jpg" alt="Trading Screen" class="w-full h-full object-cover opacity-40 mix-blend-overlay">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-90"></div>
             </div>
             <div class="relative z-10 mt-auto">
-                <div class="text-3xl text-emerald-300 mb-2 opacity-80"><i class="fas fa-quote-left"></i></div>
+                <div class="text-3xl text-emerald-300 mb-2 opacity-80"><i class="fas fa-quote-left rtl:rotate-180 inline-block"></i></div>
                 <p class="text-lg font-bold leading-snug mb-4">"TradeLearn taught me how to manage risk and master my psychology."</p>
                 <div class="flex items-center gap-3">
                     <img src="images/about3.jpg" alt="Student" class="w-10 h-10 rounded-full border-2 border-white/20">
@@ -218,15 +222,13 @@
         const toggleBtn = document.getElementById('toggle-password');
         const passInput = document.getElementById('password-input');
         
-        if(toggleBtn && passInput) {
+        if (toggleBtn && passInput) {
             toggleBtn.addEventListener('click', () => {
-                if (passInput.type === 'password') {
-                    passInput.type = 'text';
-                    toggleBtn.innerHTML = '<i class="fas fa-eye-slash text-xs"></i>';
-                } else {
-                    passInput.type = 'password';
-                    toggleBtn.innerHTML = '<i class="fas fa-eye text-xs"></i>';
-                }
+                const isPassword = passInput.type === 'password';
+                passInput.type = isPassword ? 'text' : 'password';
+                toggleBtn.innerHTML = isPassword 
+                    ? '<i class="fas fa-eye-slash text-xs"></i>' 
+                    : '<i class="fas fa-eye text-xs"></i>';
             });
         }
 
@@ -251,12 +253,12 @@
         const currentDir = localStorage.getItem('dir') || 'ltr';
         
         function updateRTLUI(dirVal) {
-            if (rtlBtn) rtlBtn.innerText = dirVal === 'rtl' ? 'RTL' : 'LTR';
+            if (rtlBtn) {
+                rtlBtn.innerText = dirVal === 'rtl' ? 'LTR' : 'RTL';
+            }
         }
 
-        if (currentDir === 'rtl') { 
-            document.documentElement.dir = 'rtl'; 
-        }
+        document.documentElement.dir = currentDir; 
         updateRTLUI(currentDir);
         
         if (rtlBtn) {

@@ -37,6 +37,7 @@
             overflow-x: hidden;
             display: flex;
             height: 100vh;
+            width: 100vw;
         }
 
         /* === THEME VARIABLES === */
@@ -83,6 +84,7 @@
             transition: all 0.3s ease;
             cursor: pointer;
             font-weight: 800;
+            flex-shrink: 0;
         }
         .icon-btn:hover {
             background: var(--accent-color);
@@ -97,14 +99,21 @@
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 50;
         }
+        [dir="rtl"] .sidebar {
+            border-right: none;
+            border-left: 1px solid var(--border-color);
+        }
+
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             background-color: var(--bg-color);
+            min-width: 0;
         }
         .topbar {
             height: 70px;
@@ -112,13 +121,57 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 16px;
             background-color: var(--sidebar-bg);
         }
+        @media (min-width: 768px) {
+            .topbar { padding: 0 24px; }
+        }
+
         .content-area {
             flex: 1;
             overflow-y: auto;
-            padding: 32px;
+            padding: 16px;
+        }
+        @media (min-width: 768px) {
+            .content-area { padding: 32px; }
+        }
+
+        /* MOBILE & TABLET DRAWER */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+            }
+            [dir="rtl"] .sidebar {
+                left: auto;
+                right: 0;
+                transform: translateX(100%);
+                box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+            }
+            .sidebar.open {
+                transform: translateX(0) !important;
+            }
         }
 
         /* SIDEBAR LINKS */
@@ -134,6 +187,10 @@
             transition: all 0.2s;
             border-left: 3px solid transparent;
         }
+        [dir="rtl"] .sidebar-link {
+            border-left: none;
+            border-right: 3px solid transparent;
+        }
         .sidebar-link:hover {
             background-color: var(--bg-secondary);
             color: var(--accent-color);
@@ -143,13 +200,16 @@
             background-color: var(--bg-secondary);
             border-left-color: var(--accent-color);
         }
+        [dir="rtl"] .sidebar-link.active {
+            border-right-color: var(--accent-color);
+        }
 
         /* CARDS */
         .stat-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 24px;
+            padding: 20px;
             display: flex;
             align-items: center;
             gap: 16px;
@@ -160,26 +220,29 @@
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
         .stat-icon {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            flex-shrink: 0;
         }
 
         /* TABLES */
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        th { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
-        td { font-size: 14px; color: var(--text-main); font-weight: 500; }
+        table { width: 100%; border-collapse: collapse; min-width: 540px; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        [dir="rtl"] th, [dir="rtl"] td { text-align: right; }
+        th { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+        td { font-size: 13px; color: var(--text-main); font-weight: 500; }
         .status-badge {
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 999px;
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
+            display: inline-block;
         }
         .status-active { background: rgba(16, 185, 129, 0.1); color: #10B981; }
         .status-pending { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
@@ -187,22 +250,28 @@
         /* TABS */
         .tab-pane { display: none; animation: fadeIn 0.3s ease; }
         .tab-pane.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 
 <body>
 
+    <!-- MOBILE BACKDROP OVERLAY -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
         <!-- LOGO HEADER -->
-        <div class="h-[70px] flex items-center px-6 border-b border-[var(--border-color)] shrink-0">
-            <!-- 100% IDENTICAL LOGO AS REQUESTED -->
-            <a href="index.html" class="inline-flex items-center gap-2 text-2xl font-bold tracking-normal uppercase"
+        <div class="h-[70px] flex items-center justify-between px-6 border-b border-[var(--border-color)] shrink-0">
+            <a href="index.html" class="inline-flex items-center gap-2 text-xl md:text-2xl font-bold tracking-normal uppercase"
                 style="color: var(--text-main) !important; text-decoration: none;">
-                <i class="fas fa-chart-line text-3xl" style="color: var(--accent-color);"></i>
+                <i class="fas fa-chart-line text-2xl md:text-3xl" style="color: var(--accent-color);"></i>
                 TradeLearn
             </a>
+            <!-- CLOSE BUTTON ON MOBILE/TABLET -->
+            <button id="sidebar-close-btn" class="icon-btn lg:hidden ml-auto" aria-label="Close sidebar">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
 
         <div class="flex-1 py-6 space-y-1 overflow-y-auto">
@@ -216,10 +285,10 @@
 
         <div class="p-6 border-t border-[var(--border-color)]">
             <div class="flex items-center gap-3">
-                <img src="images/about4.jpg" alt="User" class="w-10 h-10 rounded-full border border-[var(--border-color)]">
-                <div>
-                    <h4 class="font-bold text-sm text-[var(--text-main)]">Michael T.</h4>
-                    <p class="text-xs text-[var(--text-muted)]">Pro Member</p>
+                <img src="images/about4.jpg" alt="User" class="w-10 h-10 rounded-full border border-[var(--border-color)]" onerror="this.src='https://ui-avatars.com/api/?name=Michael+T&background=10B981&color=fff';">
+                <div class="min-w-0">
+                    <h4 class="font-bold text-sm text-[var(--text-main)] truncate">Michael T.</h4>
+                    <p class="text-xs text-[var(--text-muted)] truncate">Pro Member</p>
                 </div>
             </div>
             <a href="login.html" class="mt-4 flex items-center justify-center gap-2 w-full py-2 bg-[var(--bg-secondary)] hover:bg-red-50 hover:text-red-600 text-[var(--text-main)] rounded-lg text-sm font-semibold transition-colors border border-[var(--border-color)]">
@@ -232,10 +301,14 @@
     <main class="main-content">
         <!-- TOPBAR -->
         <header class="topbar">
-            <div class="flex items-center gap-4">
-                <h2 class="text-xl font-bold text-[var(--text-main)]">Student Dashboard</h2>
+            <div class="flex items-center gap-3 min-w-0">
+                <!-- HAMBURGER BUTTON (VISIBLE ONLY ON MOBILE & TABLET) -->
+                <button id="hamburger-btn" class="icon-btn lg:hidden" aria-label="Open sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 class="text-base sm:text-xl font-bold text-[var(--text-main)] truncate">Student Dashboard</h2>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 sm:gap-4 shrink-0">
                 <button id="theme-toggle-desktop" class="icon-btn" title="Toggle Dark Mode">
                     <i class="fas fa-moon" id="theme-icon-desktop"></i>
                 </button>
@@ -248,190 +321,192 @@
         <!-- CONTENT AREA -->
         <div class="content-area">
             <div id="tab-overview" class="tab-pane active">
-            <!-- STATS GRID -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="stat-card">
-                    <div class="stat-icon bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30">
-                        <i class="fas fa-graduation-cap"></i>
+                <!-- STATS GRID -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <p class="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider mb-1">Active Courses</p>
+                            <h3 class="text-2xl font-black text-[var(--text-main)]">3</h3>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider mb-1">Active Courses</p>
-                        <h3 class="text-2xl font-black text-[var(--text-main)]">3</h3>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-blue-100 text-blue-600 dark:bg-blue-900/30">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div>
+                            <p class="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider mb-1">Upcoming Sessions</p>
+                            <h3 class="text-2xl font-black text-[var(--text-main)]">2</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-purple-100 text-purple-600 dark:bg-purple-900/30">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <p class="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider mb-1">Completed Modules</p>
+                            <h3 class="text-2xl font-black text-[var(--text-main)]">24</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-orange-100 text-orange-600 dark:bg-orange-900/30">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div>
+                            <p class="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider mb-1">Current Rank</p>
+                            <h3 class="text-xl font-black text-[var(--text-main)] mt-1">Intermediate</h3>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon bg-blue-100 text-blue-600 dark:bg-blue-900/30">
-                        <i class="fas fa-video"></i>
+
+                <!-- CHARTS & TABLES -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                    <!-- CONTENT SECTION -->
+                    <div class="lg:col-span-2 bg-[var(--bg-card)] rounded-[20px] p-5 md:p-6 border border-[var(--border-color)]">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-[var(--text-main)] text-base md:text-lg">Weekly Goals</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)]">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-[var(--text-main)] text-sm">Support & Resistance</h4>
+                                    <span class="text-emerald-600 bg-emerald-100 px-2 py-1 rounded text-[10px] font-bold">Done</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-[var(--text-muted)]">Finished reading and passed mini-quiz for module 4.</p>
+                            </div>
+                            <div class="p-4 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)] border-l-4 border-l-[var(--accent-color)]">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-[var(--text-main)] text-sm">Live Trading Room</h4>
+                                    <span class="text-orange-600 bg-orange-100 px-2 py-1 rounded text-[10px] font-bold">Pending</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-[var(--text-muted)]">Scheduled for Thursday at 9:30 AM EST.</p>
+                            </div>
+                            <div class="p-4 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)]">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-[var(--text-main)] text-sm">Review Option Greeks</h4>
+                                    <span class="text-[var(--text-muted)] bg-[var(--border-color)] px-2 py-1 rounded text-[10px] font-bold">Next</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-[var(--text-muted)]">Read chapter 2 of advanced options manual.</p>
+                            </div>
+                            <div class="p-4 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)]">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-[var(--text-main)] text-sm">Setup Paper Trading</h4>
+                                    <span class="text-[var(--text-muted)] bg-[var(--border-color)] px-2 py-1 rounded text-[10px] font-bold">Next</span>
+                                </div>
+                                <p class="text-xs md:text-sm text-[var(--text-muted)]">Connect broker API to demo account for practice.</p>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider mb-1">Upcoming Sessions</p>
-                        <h3 class="text-2xl font-black text-[var(--text-main)]">2</h3>
+
+                    <!-- RECENT ACTIVITY -->
+                    <div class="bg-[var(--bg-card)] rounded-[20px] p-5 md:p-6 border border-[var(--border-color)]">
+                        <h3 class="font-bold text-[var(--text-main)] text-base md:text-lg mb-6">Recent Activity</h3>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-2 h-2 rounded-full bg-[var(--accent-color)] mt-2"></div>
+                                <div>
+                                    <p class="text-xs md:text-sm font-semibold text-[var(--text-main)]">Candlestick Patterns</p>
+                                    <p class="text-xs text-[var(--text-muted)] mt-0.5">2 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                                <div>
+                                    <p class="text-xs md:text-sm font-semibold text-[var(--text-main)]">Live Trading Room RSVP</p>
+                                    <p class="text-xs text-[var(--text-muted)] mt-0.5">Yesterday</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-2 h-2 rounded-full bg-[var(--accent-color)] mt-2"></div>
+                                <div>
+                                    <p class="text-xs md:text-sm font-semibold text-[var(--text-main)]">Support & Resistance</p>
+                                    <p class="text-xs text-[var(--text-muted)] mt-0.5">Oct 5, 2026</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-2 h-2 rounded-full bg-purple-500 mt-2"></div>
+                                <div>
+                                    <p class="text-xs md:text-sm font-semibold text-[var(--text-main)]">Badge: Market Beginner</p>
+                                    <p class="text-xs text-[var(--text-muted)] mt-0.5">Oct 1, 2026</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon bg-purple-100 text-purple-600 dark:bg-purple-900/30">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div>
-                        <p class="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider mb-1">Completed Modules</p>
-                        <h3 class="text-2xl font-black text-[var(--text-main)]">24</h3>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon bg-orange-100 text-orange-600 dark:bg-orange-900/30">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div>
-                        <p class="text-[var(--text-muted)] text-xs font-bold uppercase tracking-wider mb-1">Current Rank</p>
-                        <h3 class="text-xl font-black text-[var(--text-main)] mt-1">Intermediate</h3>
+
+                <!-- TABLE WITH HORIZONTAL SCROLL FOR SMALL SCREENS -->
+                <div class="mt-6 md:mt-8 bg-[var(--bg-card)] rounded-[20px] p-5 md:p-6 border border-[var(--border-color)]">
+                    <h3 class="font-bold text-[var(--text-main)] text-base md:text-lg mb-4">Course Progress</h3>
+                    <div class="overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Course Name</th>
+                                    <th>Instructor</th>
+                                    <th>Progress</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="font-semibold">Stock Market Fundamentals</div>
+                                        <div class="text-xs text-[var(--text-muted)]">Basics & Terminology</div>
+                                    </td>
+                                    <td>David Chen</td>
+                                    <td>
+                                        <div class="w-28 sm:w-40 bg-[var(--bg-secondary)] rounded-full h-2 mt-2">
+                                            <div class="bg-[var(--accent-color)] h-2 rounded-full" style="width: 100%"></div>
+                                        </div>
+                                        <span class="text-xs mt-1 block">100%</span>
+                                    </td>
+                                    <td><span class="status-badge status-active">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="font-semibold">Day Trading Mastery</div>
+                                        <div class="text-xs text-[var(--text-muted)]">Intraday Strategies</div>
+                                    </td>
+                                    <td>Elena Rostova</td>
+                                    <td>
+                                        <div class="w-28 sm:w-40 bg-[var(--bg-secondary)] rounded-full h-2 mt-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 45%"></div>
+                                        </div>
+                                        <span class="text-xs mt-1 block">45%</span>
+                                    </td>
+                                    <td><span class="status-badge status-pending">In Progress</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="font-semibold">Options Selling Strategies</div>
+                                        <div class="text-xs text-[var(--text-muted)]">Income Generation</div>
+                                    </td>
+                                    <td>David Chen</td>
+                                    <td>
+                                        <div class="w-28 sm:w-40 bg-[var(--bg-secondary)] rounded-full h-2 mt-2">
+                                            <div class="bg-gray-400 h-2 rounded-full" style="width: 0%"></div>
+                                        </div>
+                                        <span class="text-xs mt-1 block">0%</span>
+                                    </td>
+                                    <td><span class="status-badge" style="background: var(--bg-secondary); color: var(--text-muted);">Not Started</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- CHARTS & TABLES -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- CONTENT SECTION -->
-                <div class="lg:col-span-2 bg-[var(--bg-card)] rounded-[20px] p-6 border border-[var(--border-color)]">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-bold text-[var(--text-main)] text-lg">Weekly Goals</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-4 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)]">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-[var(--text-main)]">Complete Support & Resistance</h4>
-                                <span class="text-emerald-600 bg-emerald-100 px-2 py-1 rounded text-xs font-bold">Done</span>
-                            </div>
-                            <p class="text-sm text-[var(--text-muted)]">Finished reading and passed the mini-quiz for module 4.</p>
-                        </div>
-                        <div class="p-4 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)] border-l-4 border-l-[var(--accent-color)]">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-[var(--text-main)]">Attend Live Trading Room</h4>
-                                <span class="text-orange-600 bg-orange-100 px-2 py-1 rounded text-xs font-bold">Pending</span>
-                            </div>
-                            <p class="text-sm text-[var(--text-muted)]">Scheduled for Thursday at 9:30 AM EST. Don't forget your notebook.</p>
-                        </div>
-                        <div class="p-4 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)]">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-[var(--text-main)]">Review Option Greeks</h4>
-                                <span class="text-[var(--text-muted)] bg-[var(--border-color)] px-2 py-1 rounded text-xs font-bold">Next</span>
-                            </div>
-                            <p class="text-sm text-[var(--text-muted)]">Read chapter 2 of the advanced options manual.</p>
-                        </div>
-                        <div class="p-4 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)]">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-[var(--text-main)]">Setup Paper Trading</h4>
-                                <span class="text-[var(--text-muted)] bg-[var(--border-color)] px-2 py-1 rounded text-xs font-bold">Next</span>
-                            </div>
-                            <p class="text-sm text-[var(--text-muted)]">Connect broker API to the demo account for practice.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RECENT ACTIVITY -->
-                <div class="bg-[var(--bg-card)] rounded-[20px] p-6 border border-[var(--border-color)]">
-                    <h3 class="font-bold text-[var(--text-main)] text-lg mb-6">Recent Activity</h3>
-                    <div class="space-y-6">
-                        <div class="flex gap-4">
-                            <div class="w-2 h-2 rounded-full bg-[var(--accent-color)] mt-2"></div>
-                            <div>
-                                <p class="text-sm font-semibold text-[var(--text-main)]">Completed Module: Candlestick Patterns</p>
-                                <p class="text-xs text-[var(--text-muted)] mt-1">2 hours ago</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
-                            <div>
-                                <p class="text-sm font-semibold text-[var(--text-main)]">Registered for Live Trading Room</p>
-                                <p class="text-xs text-[var(--text-muted)] mt-1">Yesterday</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-2 h-2 rounded-full bg-[var(--accent-color)] mt-2"></div>
-                            <div>
-                                <p class="text-sm font-semibold text-[var(--text-main)]">Completed Module: Support & Resistance</p>
-                                <p class="text-xs text-[var(--text-muted)] mt-1">Oct 5, 2026</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-2 h-2 rounded-full bg-purple-500 mt-2"></div>
-                            <div>
-                                <p class="text-sm font-semibold text-[var(--text-main)]">Earned Badge: Market Beginner</p>
-                                <p class="text-xs text-[var(--text-muted)] mt-1">Oct 1, 2026</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TABLE -->
-            <div class="mt-8 bg-[var(--bg-card)] rounded-[20px] p-6 border border-[var(--border-color)] overflow-x-auto">
-                <h3 class="font-bold text-[var(--text-main)] text-lg mb-6">Course Progress</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Course Name</th>
-                            <th>Instructor</th>
-                            <th>Progress</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="font-semibold">Stock Market Fundamentals</div>
-                                <div class="text-xs text-[var(--text-muted)]">Basics & Terminology</div>
-                            </td>
-                            <td>David Chen</td>
-                            <td>
-                                <div class="w-full bg-[var(--bg-secondary)] rounded-full h-2 mt-2">
-                                    <div class="bg-[var(--accent-color)] h-2 rounded-full" style="width: 100%"></div>
-                                </div>
-                                <span class="text-xs mt-1 block">100%</span>
-                            </td>
-                            <td><span class="status-badge status-active bg-emerald-100 text-emerald-600">Completed</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="font-semibold">Day Trading Mastery</div>
-                                <div class="text-xs text-[var(--text-muted)]">Intraday Strategies</div>
-                            </td>
-                            <td>Elena Rostova</td>
-                            <td>
-                                <div class="w-full bg-[var(--bg-secondary)] rounded-full h-2 mt-2">
-                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 45%"></div>
-                                </div>
-                                <span class="text-xs mt-1 block">45%</span>
-                            </td>
-                            <td><span class="status-badge status-pending">In Progress</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="font-semibold">Options Selling Strategies</div>
-                                <div class="text-xs text-[var(--text-muted)]">Income Generation</div>
-                            </td>
-                            <td>David Chen</td>
-                            <td>
-                                <div class="w-full bg-[var(--bg-secondary)] rounded-full h-2 mt-2">
-                                    <div class="bg-gray-400 h-2 rounded-full" style="width: 0%"></div>
-                                </div>
-                                <span class="text-xs mt-1 block">0%</span>
-                            </td>
-                            <td><span class="status-badge" style="background: var(--bg-secondary); color: var(--text-muted);">Not Started</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            </div> <!-- End tab-overview -->
-
-            <!-- OTHER TABS CONTENT -->
+            <!-- TAB COURSES -->
             <div id="tab-courses" class="tab-pane">
-                <h3 class="font-bold text-[var(--text-main)] text-2xl mb-6">My Courses</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm transition-transform hover:-translate-y-1">
+                <h3 class="font-bold text-[var(--text-main)] text-xl md:text-2xl mb-6">My Courses</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm">
                         <img src="images/about5.jpg" class="w-full h-40 object-cover" alt="Course" onerror="this.src='https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=400';">
                         <div class="p-5">
                             <span class="text-xs font-bold text-[var(--accent-color)] uppercase tracking-wider">Trading</span>
-                            <h4 class="font-bold text-lg text-[var(--text-main)] mt-1 mb-2">Options Mastery</h4>
+                            <h4 class="font-bold text-base md:text-lg text-[var(--text-main)] mt-1 mb-2">Options Mastery</h4>
                             <div class="w-full bg-[var(--bg-secondary)] rounded-full h-2 mb-2">
                                 <div class="bg-[var(--accent-color)] h-2 rounded-full" style="width: 75%"></div>
                             </div>
@@ -439,11 +514,11 @@
                             <button class="w-full py-2 border border-[var(--accent-color)] text-[var(--accent-color)] hover:bg-[var(--accent-color)] hover:text-white rounded-full text-xs font-bold transition-colors">Continue Learning</button>
                         </div>
                     </div>
-                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm transition-transform hover:-translate-y-1">
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm">
                         <img src="images/about6.jpg" class="w-full h-40 object-cover" alt="Course" onerror="this.src='https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&q=80&w=400';">
                         <div class="p-5">
                             <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">Crypto</span>
-                            <h4 class="font-bold text-lg text-[var(--text-main)] mt-1 mb-2">Web3 & Defi</h4>
+                            <h4 class="font-bold text-base md:text-lg text-[var(--text-main)] mt-1 mb-2">Web3 & Defi</h4>
                             <div class="w-full bg-[var(--bg-secondary)] rounded-full h-2 mb-2">
                                 <div class="bg-blue-500 h-2 rounded-full" style="width: 30%"></div>
                             </div>
@@ -454,89 +529,92 @@
                 </div>
             </div>
 
+            <!-- TAB SESSIONS -->
             <div id="tab-sessions" class="tab-pane">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-[var(--text-main)] text-2xl">Live Sessions</h3>
+                    <h3 class="font-bold text-[var(--text-main)] text-xl md:text-2xl">Live Sessions</h3>
                     <button class="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-main)] rounded-lg text-xs font-bold border border-[var(--border-color)]">View Calendar</button>
                 </div>
-                <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-6">
+                <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-4 md:p-6">
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
                             <div class="flex gap-4 items-center">
-                                <div class="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 flex flex-col justify-center items-center border border-emerald-200 dark:border-emerald-800">
+                                <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 flex flex-col justify-center items-center border border-emerald-200 dark:border-emerald-800 shrink-0">
                                     <span class="text-[10px] font-bold uppercase">OCT</span>
-                                    <span class="text-xl font-black leading-none">12</span>
+                                    <span class="text-lg md:text-xl font-black leading-none">12</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-[var(--text-main)]">Live Market Prep & Scanners</h4>
+                                    <h4 class="font-bold text-sm md:text-base text-[var(--text-main)]">Live Market Prep & Scanners</h4>
                                     <p class="text-xs text-[var(--text-muted)] mt-1"><i class="far fa-clock mr-1"></i> 9:00 AM EST • with Alex Mercer</p>
                                 </div>
                             </div>
-                            <button class="px-6 py-2 bg-[var(--accent-color)] text-white rounded-full text-xs font-bold shadow-md hover:bg-[var(--accent-dark)] transition-colors">Join Link</button>
+                            <button class="w-full sm:w-auto px-6 py-2 bg-[var(--accent-color)] text-white rounded-full text-xs font-bold shadow-md hover:bg-[var(--accent-dark)] transition-colors">Join Link</button>
                         </div>
-                        <div class="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
                             <div class="flex gap-4 items-center">
-                                <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/40 flex flex-col justify-center items-center border border-blue-200 dark:border-blue-800">
+                                <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/40 flex flex-col justify-center items-center border border-blue-200 dark:border-blue-800 shrink-0">
                                     <span class="text-[10px] font-bold uppercase">OCT</span>
-                                    <span class="text-xl font-black leading-none">14</span>
+                                    <span class="text-lg md:text-xl font-black leading-none">14</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-[var(--text-main)]">Mid-Week Q&A and Trade Review</h4>
+                                    <h4 class="font-bold text-sm md:text-base text-[var(--text-main)]">Mid-Week Q&A and Review</h4>
                                     <p class="text-xs text-[var(--text-muted)] mt-1"><i class="far fa-clock mr-1"></i> 4:30 PM EST • with Samantha Lee</p>
                                 </div>
                             </div>
-                            <button class="px-6 py-2 bg-[var(--bg-card)] text-[var(--text-main)] border border-[var(--border-color)] rounded-full text-xs font-bold hover:bg-[var(--border-color)] transition-colors">RSVP</button>
+                            <button class="w-full sm:w-auto px-6 py-2 bg-[var(--bg-card)] text-[var(--text-main)] border border-[var(--border-color)] rounded-full text-xs font-bold hover:bg-[var(--border-color)] transition-colors">RSVP</button>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- TAB ANALYTICS -->
             <div id="tab-analytics" class="tab-pane">
-                <h3 class="font-bold text-[var(--text-main)] text-2xl mb-6">Trade Analytics</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="p-6 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl flex flex-col justify-center">
-                        <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Overall Win Rate</p>
-                        <h3 class="text-4xl font-black text-emerald-500">68.5%</h3>
+                <h3 class="font-bold text-[var(--text-main)] text-xl md:text-2xl mb-6">Trade Analytics</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
+                    <div class="p-5 md:p-6 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl flex flex-col justify-center">
+                        <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Win Rate</p>
+                        <h3 class="text-3xl md:text-4xl font-black text-emerald-500">68.5%</h3>
                         <p class="text-xs text-emerald-600 mt-2"><i class="fas fa-arrow-up mr-1"></i> +2.4% from last month</p>
                     </div>
-                    <div class="p-6 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl flex flex-col justify-center">
+                    <div class="p-5 md:p-6 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl flex flex-col justify-center">
                         <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Profit Factor</p>
-                        <h3 class="text-4xl font-black text-blue-500">2.14</h3>
+                        <h3 class="text-3xl md:text-4xl font-black text-blue-500">2.14</h3>
                         <p class="text-xs text-blue-600 mt-2"><i class="fas fa-arrow-up mr-1"></i> Top 15% of students</p>
                     </div>
-                    <div class="p-6 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl flex flex-col justify-center">
-                        <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Total Trades Logged</p>
-                        <h3 class="text-4xl font-black text-[var(--text-main)]">142</h3>
+                    <div class="p-5 md:p-6 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl flex flex-col justify-center">
+                        <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Trades Logged</p>
+                        <h3 class="text-3xl md:text-4xl font-black text-[var(--text-main)]">142</h3>
                     </div>
                 </div>
-                <div class="w-full h-80 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center p-6 text-center">
-                    <div class="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-2xl text-[var(--text-muted)] mb-4">
+                <div class="w-full min-h-[260px] bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl flex flex-col items-center justify-center p-6 text-center">
+                    <div class="w-14 h-14 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-xl text-[var(--text-muted)] mb-3">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h4 class="font-bold text-[var(--text-main)] text-lg">Equity Curve</h4>
-                    <p class="text-sm text-[var(--text-muted)] mt-2 max-w-sm">Connect your broker API to automatically visualize your daily PnL and drawdowns here.</p>
+                    <h4 class="font-bold text-[var(--text-main)] text-base md:text-lg">Equity Curve</h4>
+                    <p class="text-xs md:text-sm text-[var(--text-muted)] mt-2 max-w-sm">Connect your broker API to automatically visualize your daily PnL and drawdowns here.</p>
                     <button class="mt-4 px-6 py-2 border border-[var(--accent-color)] text-[var(--accent-color)] rounded-full text-xs font-bold hover:bg-[var(--accent-color)] hover:text-white transition-colors">Connect Broker</button>
                 </div>
             </div>
 
+            <!-- TAB BILLING -->
             <div id="tab-billing" class="tab-pane">
-                <h3 class="font-bold text-[var(--text-main)] text-2xl mb-6">Billing & Subscription</h3>
+                <h3 class="font-bold text-[var(--text-main)] text-xl md:text-2xl mb-6">Billing & Subscription</h3>
                 
-                <div class="p-6 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl border border-gray-700 text-white mb-8 flex justify-between items-center flex-wrap gap-4">
+                <div class="p-5 md:p-6 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl border border-gray-700 text-white mb-6 md:mb-8 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-1 block">Current Plan</span>
-                        <h4 class="text-2xl font-black">Pro Membership</h4>
-                        <p class="text-sm text-gray-400 mt-1">Renews on Nov 01, 2026 for $49.00</p>
+                        <h4 class="text-xl md:text-2xl font-black">Pro Membership</h4>
+                        <p class="text-xs md:text-sm text-gray-400 mt-1">Renews Nov 01, 2026 for $49.00</p>
                     </div>
-                    <div class="flex gap-3">
-                        <button class="px-5 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold transition-colors">Update Method</button>
-                        <button class="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg text-sm font-semibold shadow-lg shadow-emerald-500/20 transition-colors">Upgrade to Elite</button>
+                    <div class="flex flex-wrap gap-2 sm:gap-3">
+                        <button class="flex-1 sm:flex-initial px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs md:text-sm font-semibold transition-colors">Update</button>
+                        <button class="flex-1 sm:flex-initial px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg text-xs md:text-sm font-semibold shadow-lg shadow-emerald-500/20 transition-colors">Upgrade to Elite</button>
                     </div>
                 </div>
 
                 <div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden">
-                    <div class="p-5 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
-                        <h4 class="font-bold text-[var(--text-main)]">Invoice History</h4>
+                    <div class="p-4 md:p-5 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
+                        <h4 class="font-bold text-[var(--text-main)] text-sm md:text-base">Invoice History</h4>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
@@ -551,16 +629,16 @@
                             </thead>
                             <tbody>
                                 <tr class="border-b border-[var(--border-color)]">
-                                    <td class="p-4 text-sm text-[var(--text-main)]">Oct 01, 2026</td>
-                                    <td class="p-4 font-medium text-sm text-[var(--text-main)]">Pro Membership Monthly</td>
-                                    <td class="p-4 text-sm font-bold text-[var(--text-main)]">$49.00</td>
+                                    <td class="p-4 text-xs md:text-sm text-[var(--text-main)]">Oct 01, 2026</td>
+                                    <td class="p-4 font-medium text-xs md:text-sm text-[var(--text-main)]">Pro Membership Monthly</td>
+                                    <td class="p-4 text-xs md:text-sm font-bold text-[var(--text-main)]">$49.00</td>
                                     <td class="p-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 rounded text-[10px] font-bold uppercase tracking-wider">Paid</span></td>
                                     <td class="p-4"><button class="text-gray-400 hover:text-[var(--accent-color)]"><i class="fas fa-download"></i></button></td>
                                 </tr>
                                 <tr class="border-b border-[var(--border-color)]">
-                                    <td class="p-4 text-sm text-[var(--text-main)]">Sep 01, 2026</td>
-                                    <td class="p-4 font-medium text-sm text-[var(--text-main)]">Pro Membership Monthly</td>
-                                    <td class="p-4 text-sm font-bold text-[var(--text-main)]">$49.00</td>
+                                    <td class="p-4 text-xs md:text-sm text-[var(--text-main)]">Sep 01, 2026</td>
+                                    <td class="p-4 font-medium text-xs md:text-sm text-[var(--text-main)]">Pro Membership Monthly</td>
+                                    <td class="p-4 text-xs md:text-sm font-bold text-[var(--text-main)]">$49.00</td>
                                     <td class="p-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 rounded text-[10px] font-bold uppercase tracking-wider">Paid</span></td>
                                     <td class="p-4"><button class="text-gray-400 hover:text-[var(--accent-color)]"><i class="fas fa-download"></i></button></td>
                                 </tr>
@@ -570,38 +648,39 @@
                 </div>
             </div>
 
+            <!-- TAB SETTINGS -->
             <div id="tab-settings" class="tab-pane">
-                <h3 class="font-bold text-[var(--text-main)] text-2xl mb-6">Account Settings</h3>
-                <div class="max-w-2xl bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-8">
-                    <div class="flex items-center gap-6 mb-8 pb-8 border-b border-[var(--border-color)]">
-                        <img src="images/about4.jpg" alt="User" class="w-20 h-20 rounded-full border-2 border-[var(--accent-color)] object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Michael+T&background=10B981&color=fff';">
+                <h3 class="font-bold text-[var(--text-main)] text-xl md:text-2xl mb-6">Account Settings</h3>
+                <div class="max-w-2xl bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl p-5 md:p-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-6 pb-6 border-b border-[var(--border-color)]">
+                        <img src="images/about4.jpg" alt="User" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-[var(--accent-color)] object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Michael+T&background=10B981&color=fff';">
                         <div>
-                            <button class="px-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-main)] rounded-lg text-xs font-bold hover:bg-[var(--border-color)] transition-colors mb-2">Change Avatar</button>
-                            <p class="text-xs text-[var(--text-muted)]">JPG, GIF or PNG. Max size of 800K</p>
+                            <button class="px-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-main)] rounded-lg text-xs font-bold hover:bg-[var(--border-color)] transition-colors mb-1">Change Avatar</button>
+                            <p class="text-xs text-[var(--text-muted)]">JPG, GIF or PNG. Max size 800KB</p>
                         </div>
                     </div>
-                    <form class="space-y-5">
-                        <div class="grid grid-cols-2 gap-5">
+                    <form class="space-y-4 md:space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
                             <div>
                                 <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">First Name</label>
-                                <input type="text" value="Michael" class="w-full p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-main)] focus:outline-none focus:border-[var(--accent-color)] transition-colors">
+                                <input type="text" value="Michael" class="w-full p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-main)] text-sm focus:outline-none focus:border-[var(--accent-color)] transition-colors">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Last Name</label>
-                                <input type="text" value="T." class="w-full p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-main)] focus:outline-none focus:border-[var(--accent-color)] transition-colors">
+                                <input type="text" value="T." class="w-full p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-main)] text-sm focus:outline-none focus:border-[var(--accent-color)] transition-colors">
                             </div>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Email Address</label>
-                            <input type="email" value="michael.t@example.com" class="w-full p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-main)] focus:outline-none focus:border-[var(--accent-color)] transition-colors">
+                            <input type="email" value="michael.t@example.com" class="w-full p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-main)] text-sm focus:outline-none focus:border-[var(--accent-color)] transition-colors">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Discord Username</label>
-                            <input type="text" placeholder="username#1234" class="w-full p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-main)] focus:outline-none focus:border-[var(--accent-color)] transition-colors">
+                            <input type="text" placeholder="username#1234" class="w-full p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-main)] text-sm focus:outline-none focus:border-[var(--accent-color)] transition-colors">
                             <p class="text-[10px] text-[var(--text-muted)] mt-1">Required to sync your role in our community server.</p>
                         </div>
-                        <div class="pt-4">
-                            <button type="button" class="px-8 py-3 bg-[var(--accent-color)] hover:bg-[var(--accent-dark)] text-white rounded-xl text-sm font-bold shadow-lg shadow-[var(--accent-color)]/20 transition-all">Save Changes</button>
+                        <div class="pt-2">
+                            <button type="button" class="w-full sm:w-auto px-8 py-3 bg-[var(--accent-color)] hover:bg-[var(--accent-dark)] text-white rounded-xl text-sm font-bold shadow-lg shadow-[var(--accent-color)]/20 transition-all">Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -612,6 +691,28 @@
 
     <!-- JAVASCRIPT -->
     <script>
+        // Sidebar Mobile Toggle
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const sidebar = document.getElementById('sidebar');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (hamburgerBtn) hamburgerBtn.addEventListener('click', openSidebar);
+        if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
         // Theme logic
         const themeDesktop = document.getElementById('theme-toggle-desktop');
         const iconDesktop = document.getElementById('theme-icon-desktop');
@@ -659,30 +760,30 @@
 
         if (rtlBtn) rtlBtn.onclick = toggleRTL;
 
-        // Tab logic
+        // Tab logic & auto-close drawer on mobile
         const sidebarLinks = document.querySelectorAll('.sidebar-link');
         const tabPanes = document.querySelectorAll('.tab-pane');
 
         sidebarLinks.forEach(link => {
             link.addEventListener('click', (e) => {
-                if(link.getAttribute('href') !== '#') return;
+                if (link.getAttribute('href') !== '#') return;
                 e.preventDefault();
                 const targetId = link.getAttribute('data-tab');
-                if(!targetId) return;
+                if (!targetId) return;
 
-                // Remove active from all links
                 sidebarLinks.forEach(l => l.classList.remove('active'));
-                // Add active to clicked link
                 link.classList.add('active');
 
-                // Hide all tabs
                 tabPanes.forEach(pane => pane.classList.remove('active'));
-                // Show target tab
                 const targetPane = document.getElementById(targetId);
-                if(targetPane) targetPane.classList.add('active');
+                if (targetPane) targetPane.classList.add('active');
+
+                // Auto-close drawer on small screens when a link is clicked
+                if (window.innerWidth < 1024) {
+                    closeSidebar();
+                }
             });
         });
-
     </script>
 </body>
 </html>

@@ -82,6 +82,10 @@
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
         }
         body.dark-mode .navbar.scrolled { background: rgba(17, 24, 39, 0.95); border-color: rgba(255, 255, 255, 0.1); }
+        @media (max-width: 1023px) {
+            .navbar { top: 12px; height: 62px; padding: 0 18px; width: 94%; }
+            .navbar.scrolled { top: 8px; height: 58px; padding: 0 16px; width: 94%; }
+        }
         .nav-link {
             padding: 8px 4px; margin: 0 14px; color: var(--text-main); text-decoration: none;
             font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
@@ -182,9 +186,9 @@
     <nav class="navbar" id="main-nav">
         <div class="w-full flex items-center justify-between mx-auto">
             <div class="flex items-center flex-shrink-0">
-                <a href="index.html" class="inline-flex items-center gap-2 text-2xl font-bold tracking-normal uppercase"
+                <a href="index.html" class="inline-flex items-center gap-2 text-xl sm:text-2xl font-bold tracking-normal uppercase"
                     style="color: var(--text-main) !important; text-decoration: none;">
-                    <i class="fas fa-chart-line text-3xl" style="color: var(--accent-color);"></i>
+                    <i class="fas fa-chart-line text-2xl sm:text-3xl" style="color: var(--accent-color);"></i>
                     TradeLearn
                 </a>
             </div>
@@ -235,7 +239,7 @@
     <!-- ================= HAMBURGER / MOBILE MENU ================= -->
     <div class="drawer-overlay" id="drawer-overlay"></div>
     <div class="fullscreen-menu" id="fullscreen-menu">
-        <div class="w-full px-8 py-6 flex justify-between items-center shrink-0 border-b border-[var(--border-color)]">
+        <div class="w-full px-6 sm:px-8 py-5 sm:py-6 flex justify-between items-center shrink-0 border-b border-[var(--border-color)]">
             <a href="index.html" class="text-xl font-bold tracking-normal uppercase block flex items-center gap-2"
                 style="color: var(--text-main) !important; text-decoration: none;">
                 <i class="fas fa-chart-line" style="color: var(--accent-color);"></i> TradeLearn
@@ -258,7 +262,7 @@
             <a href="user.html" class="mobile-link !text-sm text-[var(--text-muted)]">User Dashboard</a>
             <a href="admin.html" class="mobile-link !text-sm text-[var(--text-muted)]">Admin Dashboard</a>
         </div>
-        <div class="w-full px-8 py-8 border-t border-[var(--border-color)] flex flex-col gap-6 shrink-0 bg-[var(--bg-secondary)]">
+        <div class="w-full px-6 sm:px-8 py-6 sm:py-8 border-t border-[var(--border-color)] flex flex-col gap-6 shrink-0 bg-[var(--bg-secondary)]">
             <div class="flex justify-between items-center w-full">
                 <div class="flex items-center gap-3">
                     <span class="text-[var(--text-muted)] font-medium text-[10px] uppercase tracking-widest">Theme</span>
@@ -278,7 +282,7 @@
     </div>
 
     <!-- ================= HERO BANNER (HOME 2) ================= -->
-    <section class="relative w-full min-h-[100dvh] flex items-center justify-center overflow-hidden bg-[var(--bg-color)]">
+    <section class="relative w-full min-h-[100dvh] pt-28 pb-14 sm:pt-32 sm:pb-20 lg:py-24 flex items-center justify-center overflow-hidden bg-[var(--bg-color)] border-b border-[var(--border-color)]">
         <!-- Full cover background image -->
         <div class="absolute inset-0 z-0">
             <img src="images/stock (5).jpg" alt="Trading Dashboard" class="w-full h-full object-cover">
@@ -287,44 +291,44 @@
             <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-color)] via-transparent to-transparent opacity-100"></div>
         </div>
 
-        <div class="max-w-[1000px] mx-auto px-6 lg:px-12 w-full relative z-10 text-center flex flex-col items-center mt-20">
-            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md shadow-sm text-emerald-400 text-xs font-bold uppercase tracking-widest mb-6">
+        <div class="max-w-[1000px] mx-auto px-6 lg:px-12 w-full relative z-10 text-center flex flex-col items-center mt-2 sm:mt-4 lg:mt-0">
+            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md shadow-sm text-emerald-400 text-xs font-bold uppercase tracking-widest mb-4 sm:mb-6">
                 <i class="fas fa-fire text-orange-500"></i> New Cohort Starting Soon
             </span>
 
-            <h1 class="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-6 text-white tracking-tight">
+            <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.15] mb-4 sm:mb-6 text-white tracking-tight">
                 Trade Smarter. <br>
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Live Free.</span>
             </h1>
 
-            <p class="text-gray-300 text-lg md:text-xl leading-relaxed font-medium mb-10 max-w-2xl mx-auto">
+            <p class="text-gray-300 text-sm sm:text-base md:text-xl leading-relaxed font-medium mb-8 sm:mb-10 max-w-2xl mx-auto">
                 Join the ultimate community for aspiring day traders. Get access to real-time alerts, daily live streams, and a comprehensive A-Z curriculum.
             </p>
 
-            <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
-                <a href="signup.html" class="btn btn-solid !py-4 !px-10 text-base flex items-center justify-center gap-2 group hover:scale-105 border border-transparent">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto justify-center">
+                <a href="signup.html" class="btn btn-solid !py-3.5 sm:!py-4 !px-8 sm:!px-10 text-sm sm:text-base flex items-center justify-center gap-2 group hover:scale-105 border border-transparent">
                     Start Your Trial <i class="fas fa-play ml-1"></i>
                 </a>
-                <a href="services.html" class="btn !bg-white/10 !text-white border border-white/20 hover:!bg-white/20 !py-4 !px-10 text-base flex items-center justify-center gap-2 backdrop-blur-md transition-all">
+                <a href="services.html" class="btn !bg-white/10 !text-white border border-white/20 hover:!bg-white/20 !py-3.5 sm:!py-4 !px-8 sm:!px-10 text-sm sm:text-base flex items-center justify-center gap-2 backdrop-blur-md transition-all">
                     Explore Curriculums
                 </a>
             </div>
             
             <!-- Trust indicators -->
-            <div class="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16 border-t border-white/10 pt-8 w-full max-w-3xl">
+            <div class="mt-10 sm:mt-16 grid grid-cols-3 sm:flex items-center justify-center gap-4 sm:gap-16 border-t border-white/10 pt-6 sm:pt-8 w-full max-w-3xl">
                 <div class="text-center">
-                    <h4 class="text-3xl font-black text-white">94%</h4>
-                    <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">Success Rate</p>
+                    <h4 class="text-2xl sm:text-3xl font-black text-white">94%</h4>
+                    <p class="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">Success Rate</p>
                 </div>
                 <div class="hidden sm:block w-px h-12 bg-white/10"></div>
                 <div class="text-center">
-                    <h4 class="text-3xl font-black text-white">$50M+</h4>
-                    <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">Student Profits</p>
+                    <h4 class="text-2xl sm:text-3xl font-black text-white">$50M+</h4>
+                    <p class="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">Student Profits</p>
                 </div>
                 <div class="hidden sm:block w-px h-12 bg-white/10"></div>
                 <div class="text-center">
-                    <h4 class="text-3xl font-black text-white">24/7</h4>
-                    <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">Support Access</p>
+                    <h4 class="text-2xl sm:text-3xl font-black text-white">24/7</h4>
+                    <p class="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">Support Access</p>
                 </div>
             </div>
         </div>
