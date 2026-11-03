@@ -73,6 +73,97 @@
                 max-height: 90vh;
             }
         }
+
+        /* === BUTTONS DESIGN SYSTEM === */
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 9999px;
+            background: var(--bg-secondary);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            font-weight: 800;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+        .icon-btn:hover {
+            background: var(--accent-color);
+            color: #fff !important;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            border-radius: 9999px;
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            line-height: 1.25;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-solid {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+            color: #FFFFFF !important;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-solid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.42);
+            filter: brightness(1.05);
+            color: #FFFFFF !important;
+        }
+
+        .btn-outline {
+            background: var(--bg-card);
+            color: var(--text-main) !important;
+            border-color: var(--border-color);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+        .btn-outline:hover {
+            background: var(--accent-color) !important;
+            color: #FFFFFF !important;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
+        }
+
+        .btn-accent-outline {
+            background: transparent;
+            color: var(--accent-color) !important;
+            border-color: var(--accent-color);
+        }
+        .btn-accent-outline:hover {
+            background: var(--accent-color) !important;
+            color: #FFFFFF !important;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
+        }
     </style>
 </head>
 <body class="min-h-screen min-h-[100dvh] w-full relative flex flex-col items-center justify-center p-4 sm:p-6 overflow-x-hidden">
@@ -86,11 +177,11 @@
 
     <!-- CONTROLS WRAPPER (Sits above card on mobile, fixed in corner on desktop) -->
     <div class="w-full max-w-4xl flex justify-end items-center gap-2.5 mb-3 sm:mb-4 sm:fixed sm:top-6 sm:end-6 sm:w-auto sm:mb-0 z-30">
-        <button id="theme-toggle" type="button" aria-label="Toggle theme" class="w-10 h-10 rounded-full bg-[var(--bg-card)] sm:bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-main)] hover:bg-[var(--accent-color)] hover:text-white hover:border-[var(--accent-color)] shadow-sm transition-all">
+        <button id="theme-toggle" type="button" aria-label="Toggle theme" class="icon-btn" title="Toggle Dark Mode">
             <i class="fas fa-moon" id="theme-icon"></i>
         </button>
-        <button id="rtl-btn" type="button" aria-label="Toggle direction" class="h-10 px-3.5 rounded-full bg-[var(--bg-card)] sm:bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-main)] font-bold text-xs hover:bg-[var(--accent-color)] hover:text-white hover:border-[var(--accent-color)] shadow-sm transition-all">
-            RTL
+        <button id="rtl-btn" type="button" aria-label="Toggle direction" class="icon-btn !w-auto !px-3.5 text-xs font-bold" title="Toggle LTR/RTL">
+            LTR
         </button>
     </div>
 
@@ -110,13 +201,13 @@
             </div>
 
             <!-- GOOGLE SIGNUP -->
-            <button type="button" class="w-full flex items-center justify-center gap-2 py-2 px-4 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg text-[var(--text-main)] text-sm font-bold hover:bg-[var(--bg-secondary)] hover:border-gray-400 transition-all mb-3 shadow-sm">
+            <button type="button" class="btn btn-outline w-full !py-3 !normal-case !font-semibold mb-3">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google">
                 Sign up with Google
             </button>
 
             <!-- APPLE SIGNUP -->
-            <button type="button" class="w-full flex items-center justify-center gap-2 py-2 px-4 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg text-[var(--text-main)] text-sm font-bold hover:bg-[var(--bg-secondary)] hover:border-gray-400 transition-all mb-4 shadow-sm">
+            <button type="button" class="btn btn-outline w-full !py-3 !normal-case !font-semibold mb-4">
                 <i class="fab fa-apple text-lg mb-[1px]"></i>
                 Sign up with Apple
             </button>
@@ -185,7 +276,7 @@
                     </p>
                 </div>
 
-                <button type="submit" class="w-full bg-[var(--accent-color)] hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-lg shadow shadow-emerald-500/30 transition-all hover:-translate-y-0.5 mt-1 text-sm">
+                <button type="submit" class="btn btn-solid w-full !py-3.5 mt-1">
                     Create Account
                 </button>
             </form>

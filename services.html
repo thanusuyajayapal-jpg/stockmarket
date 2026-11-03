@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
@@ -227,28 +227,30 @@
         }
         [dir="rtl"] .dropdown-item:hover { transform: translateX(-4px); }
 
-        /* === BUTTONS === */
+                /* === BUTTONS DESIGN SYSTEM === */
         .icon-btn {
             width: 38px;
             height: 38px;
-            border-radius: 50%;
+            border-radius: 9999px;
             background: var(--bg-secondary);
             color: var(--text-main);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             font-size: 13px;
             border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             font-weight: 800;
+            flex-shrink: 0;
+            text-decoration: none;
         }
         .icon-btn:hover {
             background: var(--accent-color);
-            color: #fff;
+            color: #fff !important;
             border-color: var(--accent-color);
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
 
         .btn {
@@ -257,31 +259,63 @@
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
             cursor: pointer;
             border-radius: 9999px;
-            border: none;
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            line-height: 1.25;
+            white-space: nowrap;
         }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+
         .btn-solid {
             background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
             color: #FFFFFF !important;
+            border-color: transparent;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
         .btn-solid:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.42);
+            filter: brightness(1.05);
+            color: #FFFFFF !important;
         }
+
         .btn-outline {
-            background: var(--bg-secondary);
-            color: var(--accent-color) !important;
+            background: var(--bg-card);
+            color: var(--text-main) !important;
+            border-color: var(--border-color);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
         }
         .btn-outline:hover {
-            background: var(--accent-color);
+            background: var(--accent-color) !important;
             color: #FFFFFF !important;
+            border-color: var(--accent-color);
             transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
+        }
+
+        .btn-accent-outline {
+            background: transparent;
+            color: var(--accent-color) !important;
+            border-color: var(--accent-color);
+        }
+        .btn-accent-outline:hover {
+            background: var(--accent-color) !important;
+            color: #FFFFFF !important;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
         }
 
         /* MOBILE MENU */
@@ -376,7 +410,7 @@
                     LTR
                 </button>
                 <div class="w-px h-6 bg-[var(--border-color)] mx-2"></div>
-                <a href="login.html" class="btn btn-solid !w-[100px] !h-[40px] !p-0 !text-[11px]">login</a>
+                <a href="login.html" class="btn btn-solid !w-[100px] !h-[40px] !p-0 !text-[11px]">Login</a>
             </div>
 
             <div class="xl:hidden flex items-center justify-end gap-4">
@@ -427,7 +461,7 @@
                 </div>
             </div>
             <div class="flex gap-4 w-full">
-                <a href="login.html" class="btn btn-outline flex-1 !py-3">login</a>
+                <a href="login.html" class="btn btn-outline flex-1 !py-3">Login</a>
             </div>
         </div>
     </div>
@@ -512,7 +546,7 @@
                             <p class="text-[var(--text-muted)] text-sm font-medium mb-8 flex-1 leading-relaxed">
                                 Master the absolute fundamentals of the stock market. Learn order types, basic chart reading, and portfolio construction.
                             </p>
-                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5 !rounded-2xl">Enquire Now</a>
+                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5">Enquire Now</a>
                         </div>
                     </div>
                 </div>
@@ -528,7 +562,7 @@
                             <p class="text-[var(--text-muted)] text-sm font-medium mb-8 flex-1 leading-relaxed">
                                 Scalp the markets with precision. We teach momentum setups, VWAP strategies, and strict intraday risk management rules.
                             </p>
-                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5 !rounded-2xl">Enquire Now</a>
+                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5">Enquire Now</a>
                         </div>
                     </div>
                 </div>
@@ -544,7 +578,7 @@
                             <p class="text-[var(--text-muted)] text-sm font-medium mb-8 flex-1 leading-relaxed">
                                 Generate consistent weekly income using Iron Condors, credit spreads, and the wheel strategy in any market condition.
                             </p>
-                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5 !rounded-2xl">Enquire Now</a>
+                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5">Enquire Now</a>
                         </div>
                     </div>
                 </div>
@@ -560,7 +594,7 @@
                             <p class="text-[var(--text-muted)] text-sm font-medium mb-8 flex-1 leading-relaxed">
                                 Automate your edge. Learn Python, connect to brokerage APIs, and backtest your strategies without writing complex code from scratch.
                             </p>
-                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5 !rounded-2xl">Enquire Now</a>
+                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5">Enquire Now</a>
                         </div>
                     </div>
                 </div>
@@ -576,7 +610,7 @@
                             <p class="text-[var(--text-muted)] text-sm font-medium mb-8 flex-1 leading-relaxed">
                                 Navigate the volatile crypto markets safely. We cover on-chain analysis, safe wallet practices, and tokenomics evaluation.
                             </p>
-                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5 !rounded-2xl">Enquire Now</a>
+                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5">Enquire Now</a>
                         </div>
                     </div>
                 </div>
@@ -592,7 +626,7 @@
                             <p class="text-[var(--text-muted)] text-sm font-medium mb-8 flex-1 leading-relaxed">
                                 Trade like the banks. Analyze Level 2 data, footprint charts, and liquidity pools to understand exactly where the smart money is positioning.
                             </p>
-                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5 !rounded-2xl">Enquire Now</a>
+                            <a href="services-details.html" class="btn btn-solid w-full mt-auto !py-3.5">Enquire Now</a>
                         </div>
                     </div>
                 </div>
