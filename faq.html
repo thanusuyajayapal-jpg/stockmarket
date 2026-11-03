@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
@@ -255,6 +255,8 @@
 
         .btn {
             padding: 12px 28px;
+            min-height: 44px;
+            box-sizing: border-box;
             font-weight: 700;
             font-size: 12px;
             text-transform: uppercase;
@@ -296,6 +298,9 @@
             color: var(--text-main) !important;
             border-color: var(--border-color);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+        body.dark-mode .btn-outline {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
         }
         .btn-outline:hover {
             background: var(--accent-color) !important;
@@ -416,7 +421,7 @@
                     LTR
                 </button>
                 <div class="w-px h-6 bg-[var(--border-color)] mx-2"></div>
-                <a href="login.html" class="btn btn-solid !w-[100px] !h-[40px] !p-0 !text-[11px]">Login</a>
+                <a href="login.html" class="btn btn-solid !py-2 !px-5 !text-xs">Login</a>
             </div>
 
             <div class="xl:hidden flex items-center justify-end gap-4">
@@ -502,7 +507,7 @@
                         <a href="#faq-section" class="btn btn-solid !py-3.5 sm:!py-4 !px-6 sm:!px-8 text-xs sm:text-sm flex items-center justify-center gap-2 group">
                             Browse FAQs <i class="fas fa-arrow-down group-hover:translate-y-1 transition-transform"></i>
                         </a>
-                        <a href="contact.html" class="btn btn-outline !bg-[var(--bg-card)] !text-[var(--text-main)] hover:!border-[var(--accent-color)] hover:!text-[var(--accent-color)] !py-3.5 sm:!py-4 !px-6 sm:!px-8 text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm">
+                        <a href="contact.html" class="btn btn-outline !py-3.5 sm:!py-4 !px-6 sm:!px-8 text-xs sm:text-sm flex items-center justify-center gap-2">
                             <i class="fas fa-headset"></i> Contact Support
                         </a>
                     </div>

@@ -25,6 +25,7 @@
             --text-main: #111827;
             --text-muted: #6B7280;
             --accent-color: #10B981;
+            --accent-dark: #059669;
             --border-color: #E5E7EB;
         }
 
@@ -34,6 +35,8 @@
             --bg-card: #1F2937;
             --text-main: #F9FAFB;
             --text-muted: #9CA3AF;
+            --accent-color: #34D399;
+            --accent-dark: #10B981;
             --border-color: #374151;
         }
 
@@ -102,6 +105,8 @@
 
         .btn {
             padding: 12px 28px;
+            min-height: 44px;
+            box-sizing: border-box;
             font-weight: 700;
             font-size: 12px;
             text-transform: uppercase;
@@ -143,6 +148,9 @@
             color: var(--text-main) !important;
             border-color: var(--border-color);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+        body.dark-mode .btn-outline {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
         }
         .btn-outline:hover {
             background: var(--accent-color) !important;
@@ -201,13 +209,13 @@
             </div>
 
             <!-- GOOGLE LOGIN -->
-            <button type="button" class="btn btn-outline w-full !py-3 !normal-case !font-semibold mb-3">
+            <button type="button" class="btn btn-outline w-full !py-3.5 !normal-case !font-semibold mb-3">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google">
                 Log in with Google
             </button>
 
             <!-- APPLE LOGIN -->
-            <button type="button" class="btn btn-outline w-full !py-3 !normal-case !font-semibold mb-5">
+            <button type="button" class="btn btn-outline w-full !py-3.5 !normal-case !font-semibold mb-5">
                 <i class="fab fa-apple text-lg mb-[1px]"></i>
                 Log in with Apple
             </button>

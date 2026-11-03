@@ -97,6 +97,8 @@
 
         .btn {
             padding: 12px 28px;
+            min-height: 44px;
+            box-sizing: border-box;
             font-weight: 700;
             font-size: 12px;
             text-transform: uppercase;
@@ -138,6 +140,9 @@
             color: var(--text-main) !important;
             border-color: var(--border-color);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+        body.dark-mode .btn-outline {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
         }
         .btn-outline:hover {
             background: var(--accent-color) !important;
@@ -600,7 +605,7 @@
                                 <div class="bg-blue-500 h-2 rounded-full" style="width: 30%"></div>
                             </div>
                             <p class="text-xs text-[var(--text-muted)] mb-4">30% Completed</p>
-                            <button class="btn w-full !py-2.5 !text-xs !border-blue-500 text-blue-500 hover:!bg-blue-500 hover:!text-white">Continue Learning</button>
+                            <button class="btn btn-outline w-full !py-2.5 !text-xs !border-blue-500 !text-blue-500 hover:!bg-blue-500 hover:!text-white">Continue Learning</button>
                         </div>
                     </div>
                 </div>
@@ -684,7 +689,7 @@
                         <p class="text-xs md:text-sm text-gray-400 mt-1">Renews Nov 01, 2026 for $49.00</p>
                     </div>
                     <div class="flex flex-wrap gap-2 sm:gap-3">
-                        <button class="btn !bg-white/10 !text-white border border-white/20 hover:!bg-white/20 flex-1 sm:flex-initial !py-2 !px-5 !text-xs !normal-case">Update</button>
+                        <button class="btn btn-outline !bg-white/10 !text-white !border-white/20 hover:!bg-white/20 flex-1 sm:flex-initial !py-2 !px-5 !text-xs !normal-case">Update</button>
                         <button class="btn btn-solid flex-1 sm:flex-initial !py-2 !px-5 !text-xs !normal-case">Upgrade to Elite</button>
                     </div>
                 </div>

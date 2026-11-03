@@ -97,6 +97,8 @@
 
         .btn {
             padding: 12px 28px;
+            min-height: 44px;
+            box-sizing: border-box;
             font-weight: 700;
             font-size: 12px;
             text-transform: uppercase;
@@ -138,6 +140,9 @@
             color: var(--text-main) !important;
             border-color: var(--border-color);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+        body.dark-mode .btn-outline {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
         }
         .btn-outline:hover {
             background: var(--accent-color) !important;
@@ -454,7 +459,7 @@
                                 <div class="min-w-0 flex-1">
                                     <h4 class="font-bold text-red-700 dark:text-red-400 text-sm md:text-base">Payment Gateway Warning</h4>
                                     <p class="text-xs md:text-sm text-red-600 dark:text-red-300 mt-1">Stripe API is reporting higher than normal latency. Some student checkouts may be delayed.</p>
-                                    <button class="btn !py-1.5 !px-3.5 !text-xs !normal-case bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 hover:bg-red-200 mt-3">Check Status Page</button>
+                                    <button class="btn btn-outline !py-1.5 !px-3.5 !text-xs !normal-case !bg-red-100 dark:!bg-red-900/40 !text-red-700 dark:!text-red-300 !border-red-200 dark:!border-red-800 hover:!bg-red-200 hover:!text-red-800 hover:!border-red-300 mt-3">Check Status Page</button>
                                 </div>
                             </div>
                             <div class="p-4 md:p-5 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)] flex items-start gap-4">
